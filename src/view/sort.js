@@ -27,7 +27,7 @@ const sortingTemplateFacture = () => (
 
 class SortingView {
   getTemplate() {
-    return sortingTemplateFacture;
+    return sortingTemplateFacture();
   }
 
   getElement() {
@@ -42,4 +42,4 @@ class SortingView {
   }
 }
 
-export default {SortingView};
+export default SortingView;

@@ -16,7 +16,7 @@ const filtersTemplateFactory = () => (
 
 class FiltersView {
   getTemplate () {
-    return filtersTemplateFactory;
+    return filtersTemplateFactory();
   }
 
   getElement() {
@@ -32,4 +32,4 @@ class FiltersView {
   }
 }
 
-export default {FiltersView};
+export default FiltersView;

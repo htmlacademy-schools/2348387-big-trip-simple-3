@@ -1,26 +1,39 @@
 import { createElement } from '../render.js';
+import { getOfferName, getOfferPrice } from '../mock/const.js';
+import { fullDate, getTime, getWithoutTime, shortDate } from '../dateAPI.js';
+import { getDestById } from '../mock/mock.js';
 
-const pathPointFactory = () => (
-  `<li class="trip-events__item">
+const createOfferTemplate = (offerIds) => offerIds.map((id) => `<li class="event__offer">
+  <span class="event__offer-title">${getOfferName(id)}</span>
+  &plus;&euro;&nbsp;
+  <span class="event__offer-price">${getOfferPrice(id)}</span>
+  </li>`).join('');
+
+const pathPointFactory = (point) => {
+  const destination = getDestById(point.destination);
+  return `<li class="trip-events__item">
 	<div class="event">
-	  <time class="event__date" datetime="2019-03-18"></time>
+	  <time class="event__date" datetime="${getWithoutTime(point.dateFrom)}">${shortDate(point.dateFrom)}</time>
 	  <div class="event__type">
-		<img class="event__type-icon" width="42" height="42" src="img/icons/taxi.png" alt="Event type icon">
+		<img class="event__type-icon" width="42" height="42" src="img/icons/${point.type}.png" alt="Event type icon">
 	  </div>
-	  <h3 class="event__title"></h3>
+	  <h3 class="event__title">${point.type} ${destination.name}</h3>
 	  <div class="event__schedule">
 		<p class="event__time">
-		  <time class="event__start-time" datetime="2019-03-18T10:30">10:30</time>
+		  <time class="event__start-time" datetime="${fullDate(point.dateFrom)}">${getTime(point.dateFrom)}</time>
 		  &mdash;
-		  <time class="event__end-time" datetime="2019-03-18T11:00">11:00</time>
+		  <time class="event__end-time" datetime="${fullDate(point.dateTo)}">${getTime(point.dateTo)}</time>
 		</p>
 		<p class="event__duration"> D H
 	  M</p>
 	  </div>
 	  <p class="event__price">
-		&euro;&nbsp;<span class="event__price-value"></span>
+		&euro;&nbsp;<span class="event__price-value">${point.price}</span>
 	  </p>
 	  <h4 class="visually-hidden">Offers:</h4>
+    <ul class="event__selected-offers">
+    ${createOfferTemplate(point.offers)}
+    </ul>
 	  <button class="event__favorite-btn event__favorite-btn--active" type="button">
 		<span class="visually-hidden">Add to favorite</span>
 		<svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
@@ -31,13 +44,17 @@ const pathPointFactory = () => (
 		<span class="visually-hidden">Open event</span>
 	  </button>
 	</div>
-  </li>`);
+  </li>`;};
 
 
 class PointView {
 
+  constructor(point) {
+    this.point = point;
+  }
+
   getTemplate() {
-    return pathPointFactory;
+    return pathPointFactory(this.point);
   }
 
   getElement() {
@@ -50,4 +67,4 @@ class PointView {
   }
 }
 
-export default {PointView};
+export default PointView;

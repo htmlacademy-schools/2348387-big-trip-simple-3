@@ -1,14 +1,11 @@
 import { createElement } from '../render.js';
 
-const tripEventsTemplateFactory = () => (
-  `<ul class="trip-events__list">
-  </ul>`
-);
 
 class TripEventsView {
-  getTemplate () {
-    return tripEventsTemplateFactory;
-  }
+  getTemplate = () => (
+    `<ul class="trip-events__list">
+    </ul>`
+  );
 
   getElement() {
     if (!this.element){
@@ -23,4 +20,4 @@ class TripEventsView {
   }
 }
 
-export default {TripEventsView};
+export default TripEventsView;

@@ -48,22 +48,25 @@ const pathPointFactory = (point) => {
 
 
 class PointView {
+  #element = null;
 
   constructor(point) {
     this.point = point;
   }
 
-  getTemplate() {
+  get template() {
     return pathPointFactory(this.point);
   }
 
-  getElement() {
-    this.element = createElement(this.getTemplate());
-    return this.element;
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
+    }
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }
 

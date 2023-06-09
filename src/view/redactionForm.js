@@ -124,24 +124,25 @@ const editMenuFactory = (point) => {
 };
 
 class RedactionView {
+  #element = null;
 
   constructor(point) {
     this.point = point;
   }
 
-  getTemplate() {
+  get template() {
     return editMenuFactory(this.point);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }
 

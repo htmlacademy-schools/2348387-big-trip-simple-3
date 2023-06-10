@@ -1,9 +1,17 @@
 import dayjs from 'dayjs';
-import { SortType, FilterType } from '../mock/const.js';
+import { SortType, FilterType, MODEL_DATE_FORMAT } from '../mock/const.js';
 
 const getRandomInt = (upperBound = 100) => (Math.floor(Math.random() * upperBound));
-const getFormattedDate = (eventDate, format) => dayjs(eventDate).format(format);
-const isEventUpcoming = (date) => !dayjs(date).isBefore(dayjs(), 'D');
+
+const getFormattedDate = (eventDate, format = MODEL_DATE_FORMAT) => dayjs(eventDate).format(format);
+
+const isEventUpcoming = (date) => !dayjs(date).isBefore(dayjs(), 'day');
+
+const turnModelDateToFramework = (date) => dayjs(date).format('DD/MM/YY HH:mm');
+
+const compareDates = (a, b) => dayjs(a).diff(dayjs(b)) < 0;
+
+
 const getMockText = (len) => {
   const mockText = `
   Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
@@ -50,4 +58,4 @@ const sortPointsByPrice = (pa, pb) => pb.base_price - pa.base_price;
 const getIdFromTag = (tag) => +tag.id.split('-').slice(-1);
 
 export {filter, sort};
-export {getRandomInt, getFormattedDate, isEventUpcoming, getMockText, updateItem, sortPointsByDay, sortPointsByPrice, getIdFromTag};
+export {getRandomInt, getFormattedDate, isEventUpcoming, getMockText, updateItem, sortPointsByDay, sortPointsByPrice, getIdFromTag, turnModelDateToFramework, compareDates};

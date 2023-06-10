@@ -1,4 +1,4 @@
-import { getRandomInt, getMockText, sort, filter } from '../util/utils.js';
+import { getRandomInt, getMockText, getFormattedDate, sort, filter } from '../util/utils.js';
 import { POINT_TYPES } from './const.js';
 import dayjs from 'dayjs';
 
@@ -47,11 +47,11 @@ const generateOffers = () => {
 const generateType = () => POINT_TYPES[getRandomInt(POINT_TYPES.length)];
 
 const generateDate = () => {
-  const dateFrom = dayjs().add(getRandomInt(600000), 'minute');
-  const dateTo = dateFrom.add(getRandomInt(1000), 'minute');
+  const dateFrom = dayjs();
+  const dateTo = dateFrom.add(getRandomInt(24), 'hour');
   return {
-    'date_from': dateFrom,
-    'date_to': dateTo,
+    'date_from': getFormattedDate(dateFrom),
+    'date_to': getFormattedDate(dateTo),
   };
 };
 

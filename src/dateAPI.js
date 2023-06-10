@@ -16,4 +16,6 @@ const getWithoutTime = (date) => date.format('YYYY-MM-DD');
 
 const shortDate = (date) => date.format('MMM D');
 
-export {getDates, fullDate, getTime, getWithoutTime, shortDate};
+const isPassed = (date) => date.isBefore(dayjs(), 'D') || date.isSame(dayjs(), 'D');
+
+export {getDates, fullDate, getTime, getWithoutTime, shortDate, isPassed};

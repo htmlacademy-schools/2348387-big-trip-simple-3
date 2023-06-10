@@ -1,10 +1,15 @@
 import { getRandInt } from '../utils.js';
-import { getDates } from '../dateAPI.js';
-import {TYPES, CITIES, getArrayFromType, DESCRIPTION} from './const.js';
+import { getDates, isPassed } from '../dateAPI.js';
+import {TYPES, CITIES, DESCRIPTION, getArrayFromType, FilterType} from './const.js';
 
 let i = 0;
 let pointId = 0;
 const destinations = [];
+
+const filter = {
+  [FilterType.ALL]: (points) => points,
+  [FilterType.FUTURE]: (points) => points.filter((point) => isPassed(point.dateFrom))
+};
 
 const destinationFactory = () => {
   const res = {
@@ -40,4 +45,9 @@ const generatePoint = () => {
   };
 };
 
-export {getDestById, generatePoint};
+const generateFilter = (points) => Object.entries(filter).map(([filterName, filterPoints]) => ({
+  name: filterName,
+  count: filterPoints(points).length,
+}));
+
+export {getDestById, generatePoint, generateFilter};

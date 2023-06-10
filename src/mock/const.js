@@ -106,5 +106,13 @@ const FilterType = {
   FUTURE: 'future',
 };
 
-export {DESCRIPTION, TYPES, CITIES, OFFERS};
-export {getOfferName, getOfferPrice, getArrayFromType, FilterType};
+const SortingType = {
+  DAY: 'day',
+  EVENT: 'event',
+  TIME: 'time',
+  PRICE: 'price',
+  OFFERS: 'offers',
+};
+
+export {DESCRIPTION, TYPES, CITIES, OFFERS, FilterType, SortingType};
+export {getOfferName, getOfferPrice, getArrayFromType};

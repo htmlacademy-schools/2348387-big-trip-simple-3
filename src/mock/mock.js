@@ -1,61 +1,89 @@
-import { getRandInt } from '../util/utils.js';
-import { getDates, isPassed } from '../util/dateAPI.js';
-import {TYPES, CITIES, DESCRIPTION, getArrayFromType, FilterType, SortingType} from './const.js';
+import { getRandomInt, getMockText, sort, filter } from '../util/utils.js';
+import { POINT_TYPES } from './const.js';
+import dayjs from 'dayjs';
 
-let i = 0;
-let pointId = 0;
-const destinations = [];
-
-const filter = {
-  [FilterType.ALL]: (points) => points,
-  [FilterType.FUTURE]: (points) => points.filter((point) => isPassed(point.dateFrom))
-};
-
-const sort = {
-  [SortingType.DAY]: (points) => points,
-  [SortingType.EVENT]: (points) => points,
-  [SortingType.TIME]: (points) => points,
-  [SortingType.PRICE]: (points) => points,
-  [SortingType.OFFERS]: (points) => points,
-};
-
-const destinationFactory = () => {
-  const res = {
-    id: ++i,
-    name: CITIES[getRandInt(0, CITIES.length - 1)],
-    description: DESCRIPTION[getRandInt(0, DESCRIPTION.length - 1)],
-    pictures: [
-      {
-        src: `http://picsum.photos/248/152?r=${getRandInt(1, 100)}`,
-        description: 'placeholder'
-      }
-    ]
-  };
-  destinations.push(res);
+const generatePictures = () => {
+  const res = new Array(getRandomInt(5));
+  for (let i = 0; i < res.length; i++) {
+    res[i] = {
+      'src': `http://picsum.photos/300/200?r=${getRandomInt(Number.MAX_SAFE_INTEGER)}`,
+      'description': getMockText(getRandomInt(50)),
+    };
+  }
   return res;
 };
 
-const getDestById = (id) => destinations.find((dest) => dest.id === id);
+const mockDestinationNamesList = ['Amsterdam', 'Geneva', 'Chamonix'];
+const destinationsStorage = [];
+for (let i = 0; i < mockDestinationNamesList.length; i++) {
+  destinationsStorage[i] = {
+    'id': i,
+    'description': getMockText(getRandomInt(200)),
+    'name': mockDestinationNamesList[i],
+    'pictures': generatePictures(),
+  };
+}
 
-const generatePoint = () => {
-  const pointType = TYPES[getRandInt(1, TYPES.length - 1)];
-  const dates = getDates();
-  const offersForType = getArrayFromType(pointType);
-  const dest = destinationFactory();
+const numOfOffers = getRandomInt(7);
+const offersStorage = {};
+for (let i = 0; i < numOfOffers; i++) {
+  offersStorage[i] = {
+    'id': i,
+    'title': `Offer #${i}`,
+    'price': getRandomInt(100)
+  };
+}
+
+const generateOffers = () => {
+  const res = new Set();
+  for (let i = 0; i < numOfOffers; i++) {
+    if (getRandomInt() > 50) {
+      res.add(i);
+    }
+  }
+  return Array.from(res);
+};
+
+const generateType = () => POINT_TYPES[getRandomInt(POINT_TYPES.length)];
+
+const generateDate = () => {
+  const dateFrom = dayjs().add(getRandomInt(600000), 'minute');
+  const dateTo = dateFrom.add(getRandomInt(1000), 'minute');
   return {
-    id: ++pointId,
-    type: pointType,
-    destination: dest.id,
-    dateFrom: dates[0],
-    dateTo: dates[1],
-    price: getRandInt(1, 1500),
-    offers: offersForType.slice(getRandInt(0, offersForType.length - 1))
+    'date_from': dateFrom,
+    'date_to': dateTo,
   };
 };
 
-const generateFilter = (points) => Object.entries(filter).map(([filterName, filterPoints]) => ({
-  name: filterName,
-  count: filterPoints(points).length,
+const generatePoint = (id) => {
+  const dates = generateDate();
+  return {
+    'id': id,
+    'type': generateType(),
+    'base_price': getRandomInt(1000),
+    'date_from': dates.date_from,
+    'date_to': dates.date_to,
+    'destination': getRandomInt(Object.keys(destinationsStorage).length),
+    'offers': generateOffers()
+  };
+};
+
+const generatePoints = (numOfPoints) => {
+  const res = [];
+  for (let i = 0; i < numOfPoints; i++) {
+    res.push(generatePoint(i));
+  }
+  return res;
+};
+
+const getDefaultPoint = () => (Object.assign({}, {
+  'id': 0,
+  'type': POINT_TYPES[0],
+  'base_price': null,
+  'date_from': dayjs(),
+  'date_to': dayjs(),
+  'destination': 0,
+  'offers': [],
 }));
 
 const generateSort = (points) => Object.entries(sort).map(([sortName, sortPoints]) => ({
@@ -63,4 +91,10 @@ const generateSort = (points) => Object.entries(sort).map(([sortName, sortPoints
   count: sortPoints(points).length
 }));
 
-export {getDestById, generatePoint, generateFilter, generateSort};
+const generateFilter = (points) => Object.entries(filter).map(([filterName, filterPoints]) => ({
+  name: filterName,
+  count: filterPoints(points).length,
+}));
+
+export {destinationsStorage, offersStorage};
+export {generatePoints, getDefaultPoint, generateSort, generateFilter};

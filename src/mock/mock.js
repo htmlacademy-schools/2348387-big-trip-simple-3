@@ -1,6 +1,6 @@
 import { getRandInt } from '../utils.js';
 import { getDates, isPassed } from '../dateAPI.js';
-import {TYPES, CITIES, DESCRIPTION, getArrayFromType, FilterType} from './const.js';
+import {TYPES, CITIES, DESCRIPTION, getArrayFromType, FilterType, SortingType} from './const.js';
 
 let i = 0;
 let pointId = 0;
@@ -9,6 +9,14 @@ const destinations = [];
 const filter = {
   [FilterType.ALL]: (points) => points,
   [FilterType.FUTURE]: (points) => points.filter((point) => isPassed(point.dateFrom))
+};
+
+const sort = {
+  [SortingType.DAY]: (points) => points,
+  [SortingType.EVENT]: (points) => points,
+  [SortingType.TIME]: (points) => points,
+  [SortingType.PRICE]: (points) => points,
+  [SortingType.OFFERS]: (points) => points,
 };
 
 const destinationFactory = () => {
@@ -50,4 +58,9 @@ const generateFilter = (points) => Object.entries(filter).map(([filterName, filt
   count: filterPoints(points).length,
 }));
 
-export {getDestById, generatePoint, generateFilter};
+const generateSort = (points) => Object.entries(sort).map(([sortName, sortPoints]) => ({
+  name: sortName,
+  count: sortPoints(points).length
+}));
+
+export {getDestById, generatePoint, generateFilter, generateSort};

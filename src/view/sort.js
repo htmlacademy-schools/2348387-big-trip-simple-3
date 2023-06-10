@@ -1,34 +1,29 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import { capitalize } from '../utils.js';
-import { SortingType } from '../mock/const.js';
+import { SortType } from '../mock/const.js';
 
-const makeItemTemplate = (sort, status) => `
-<div class="trip-sort__item  trip-sort__item--${sort}">
-<input id="sort-${sort}" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-${sort}" ${status}>
-<label class="trip-sort__btn" for="sort-${sort}">${capitalize(sort)}</label>
-</div>`;
+const makeSortItemSample = (sortName, sortStatus) => `
+  <div class="trip-sort__item  trip-sort__item--${sortName}">
+    <input id="sort-${sortName}" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-${sortName}" ${sortStatus}>
+    <label class="trip-sort__btn" for="sort-${sortName}" data-sort-type="${sortName}">${sortName}</label>
+  </div>
+`;
 
-const makeSortingTemplateFacture = (activeSort) => (
-  `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
-  ${makeItemTemplate(SortingType.DAY, activeSort === SortingType.DAY ? 'checked' : '')}
-  ${makeItemTemplate(SortingType.EVENT, 'disabled')}
-  ${makeItemTemplate(SortingType.TIME, 'disabled')}
-  ${makeItemTemplate(SortingType.PRICE, activeSort === SortingType.PRICE ? 'checked' : '')}
-  ${makeItemTemplate(SortingType.OFFERS, 'disabled')}
-  </form>`
-);
+const makeSortSample = (currentSort) => `
+  <form class="trip-events__trip-sort  trip-sort" action="#" method="get">
+    ${makeSortItemSample(SortType.DAY, currentSort === SortType.DAY ? 'checked' : '')}
+    ${makeSortItemSample(SortType.EVENT, 'disabled')}
+    ${makeSortItemSample(SortType.TIME, 'disabled')}
+    ${makeSortItemSample(SortType.PRICE, currentSort === SortType.PRICE ? 'checked' : '')}
+    ${makeSortItemSample(SortType.OFFERS, 'disabled')}
+  </form>
+`;
 
-class SortingView extends AbstractView{
-  #activeSort = SortingType.DAY;
+class SortView extends AbstractView {
+  #currentSort = SortType.DAY;
 
   get template() {
-    return makeSortingTemplateFacture(this.#activeSort);
+    return makeSortSample(this.#currentSort);
   }
-
-  setSortTypeChangeHandler = (callback) => {
-    this._callback.sortTypeChange = callback;
-    this.element.addEventListener('click', this.#sortTypeChangeHandler);
-  };
 
   #sortTypeChangeHandler = (evt) => {
     if (evt.target.tagName !== 'LABEL') {
@@ -36,9 +31,14 @@ class SortingView extends AbstractView{
     }
 
     evt.preventDefault();
-    this.#activeSort = evt.target.outerText.toLowerCase();
-    this._callback.sortTypeChange(evt.target.outerText.toLowerCase());
+    this.#currentSort = evt.target.dataset.sortType;
+    this._callback.sortTypeChange(evt.target.dataset.sortType);
+  };
+
+  setSortTypeChangeHandler = (callback) => {
+    this._callback.sortTypeChange = callback;
+    this.element.addEventListener('click', this.#sortTypeChangeHandler);
   };
 }
 
-export default SortingView;
+export default SortView;

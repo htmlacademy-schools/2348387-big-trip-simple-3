@@ -1,10 +1,15 @@
-import { generatePoint } from '../mock/mock.js';
+import { generatePoints } from '../mock/mock.js';
+
+const POINT_COUNT = 3;
 
 class TripModel {
+  #points = [];
 
-  #points = Array.from({length: 5}, generatePoint);
+  constructor() {
+    this.#points.push(...generatePoints(POINT_COUNT));
+  }
 
-  get points () {
+  get points() {
     return this.#points;
   }
 }

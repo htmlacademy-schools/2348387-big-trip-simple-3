@@ -1,5 +1,5 @@
 import { getArrayFromType, getOfferName, getOfferPrice, CITIES } from '../mock/const.js';
-import { fullDate } from '../dateAPI.js';
+import { fullDate } from '../util/dateAPI.js';
 import { getDestById } from '../mock/mock.js';
 import AbstractView from '../framework/view/abstract-view.js';
 

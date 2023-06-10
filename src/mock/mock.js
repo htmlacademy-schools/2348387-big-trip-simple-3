@@ -1,5 +1,5 @@
-import { getRandInt } from '../utils.js';
-import { getDates, isPassed } from '../dateAPI.js';
+import { getRandInt } from '../util/utils.js';
+import { getDates, isPassed } from '../util/dateAPI.js';
 import {TYPES, CITIES, DESCRIPTION, getArrayFromType, FilterType, SortingType} from './const.js';
 
 let i = 0;

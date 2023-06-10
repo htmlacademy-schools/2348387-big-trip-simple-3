@@ -1,6 +1,6 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import { getOfferName, getOfferPrice } from '../mock/const.js';
-import { fullDate, getTime, getWithoutTime, shortDate } from '../dateAPI.js';
+import { fullDate, getTime, getWithoutTime, shortDate } from '../util/dateAPI.js';
 import { getDestById } from '../mock/mock.js';
 
 const createOfferTemplate = (offerIds) => offerIds.map((id) => `<li class="event__offer">

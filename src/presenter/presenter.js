@@ -1,10 +1,10 @@
 import PointPresenter from './presenterPoints.js';
-import EmptyEntryView from './view/emptyEntry.js';
-import TripEventsView from './view/eventList.js';
-import SortingView from './view/sort.js';
-import { render, remove } from './framework/render.js';
-import { SortingType } from './mock/const.js';
-import { updateItem, diffByDay, diffByPrice } from './utils.js';
+import EmptyEntryView from '../view/emptyEntry.js';
+import TripEventsView from '../view/eventList.js';
+import SortingView from '../view/sort.js';
+import { render, remove } from '../framework/render.js';
+import { SortingType } from '../mock/const.js';
+import { updateItem, diffByDay, diffByPrice } from '../util/utils.js';
 
 class Presenter {
 

@@ -1,7 +1,7 @@
 import TripModel from './model/tripModel.js';
 import Presenter from './presenter.js';
 import FiltersView from './view/filters.js';
-import { render } from './render.js';
+import { render } from './framework/render.js';
 
 
 const filtersContainer = document.querySelector('.trip-controls__filters');

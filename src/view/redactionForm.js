@@ -1,4 +1,4 @@
-import { createElement } from '../render.js';
+import AbstractView from '../framework/view/abstract-view';
 import { getArrayFromType, getOfferName, getOfferPrice, CITIES } from '../mock/const.js';
 import { fullDate } from '../dateAPI.js';
 import { getDestById } from '../mock/mock.js';
@@ -24,7 +24,7 @@ const citiesListTemplateFactory = (cities) => cities.map((city) =>
 
 const editMenuFactory = (point) => {
   const destination = getDestById(point.destination);
-  return `<form class="event event--edit" action="#" method="post">
+  return `<li><form class="event event--edit" action="#" method="post">
 	<header class="event__header">
 	  <div class="event__type-wrapper">
 		<label class="event__type  event__type-btn" for="event-type-toggle-1">
@@ -120,13 +120,13 @@ const editMenuFactory = (point) => {
     </div>
 	  </section>
 	</section>
-  </form>`;
+  </form></li>`;
 };
 
-class RedactionView {
-  #element = null;
+class RedactionView extends AbstractView{
 
   constructor(point) {
+    super();
     this.point = point;
   }
 
@@ -134,16 +134,25 @@ class RedactionView {
     return editMenuFactory(this.point);
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-    return this.#element;
-  }
+  #submitHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.formSubmit();
+  };
 
-  removeElement() {
-    this.#element = null;
-  }
+  #clickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.click();
+  };
+
+  setSubmitHandler = (callback) => {
+    this._callback.formSubmit = callback;
+    this.element.querySelector('.event--edit').addEventListener('submit', this.#submitHandler);
+  };
+
+  setClickHandler = (callback) => {
+    this._callback.click = callback;
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#clickHandler);
+  };
 }
 
 export default RedactionView;

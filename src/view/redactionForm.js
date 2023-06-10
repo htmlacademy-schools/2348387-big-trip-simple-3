@@ -1,21 +1,35 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { destinationsStorage, offersStorage } from '../mock/mock.js';
-import { getIdFromTag } from '../util/utils.js';
+import { compareDates, getIdFromTag, turnModelDateToFramework } from '../util/utils.js';
 import { makePointEditSample } from '../util/redactionUtil.js';
+
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
 
 class RedactionView extends AbstractStatefulView {
   _state = null;
+  #datepickers = [];
 
   constructor(point) {
     super();
     this._state = RedactionView.parsePointToState(point);
 
     this.#setInnerHandlers();
+    this.#setDatepickers();
   }
 
   get template() {
     return makePointEditSample(this._state);
   }
+
+  removeElement = () => {
+    super.removeElement();
+
+    if (this.#datepickers) {
+      this.#datepickers.forEach((dp) => dp.destroy());
+      this.#datepickers = [];
+    }
+  };
 
   reset = (point) => {
     this.updateElement(RedactionView.parsePointToState(point));
@@ -23,6 +37,7 @@ class RedactionView extends AbstractStatefulView {
 
   _restoreHandlers = () => {
     this.#setInnerHandlers();
+    this.#setDatepickers();
     this.setFormSubmitHandler(this._callback.formSubmit);
   };
 
@@ -40,6 +55,46 @@ class RedactionView extends AbstractStatefulView {
     this.element.querySelector('.event__input--destination')
       .addEventListener('input', this.#destinationHandler);
   };
+
+  #dateFromChangeHandler = ([ndate]) =>{
+    this.updateElement({
+      'date_from': ndate,
+    });
+  };
+
+  #dateToChangeHandler = ([ndate]) =>{
+    this.updateElement({
+      'date_to': ndate,
+    });
+  };
+
+  #isBeforeDateFrom = (date) => compareDates(date, this._state.date_from);
+
+  #setDatepickers = () => {
+    this.#datepickers = [
+      flatpickr(
+        this.element.querySelectorAll('.event__input--time')[0],
+        {
+          enableTime: true,
+          'time_24hr': true,
+          dateFormat: 'd/m/y H:i',
+          defaultDate: turnModelDateToFramework(this._state.date_from),
+          onChange: this.#dateFromChangeHandler,
+        },
+      ),
+      flatpickr(
+        this.element.querySelectorAll('.event__input--time')[1],
+        {
+          enableTime: true,
+          'time_24hr': true,
+          dateFormat: 'd/m/y H:i',
+          defaultDate: turnModelDateToFramework(this._state.date_to),
+          onChange: this.#dateToChangeHandler,
+          'disable': [this.#isBeforeDateFrom],
+        },
+      )];
+  };
+
 
   #offersHandler = (evt) => {
     evt.preventDefault();

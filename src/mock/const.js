@@ -101,5 +101,10 @@ const getArrayFromType = (type) => {
   }
 };
 
+const FilterType = {
+  ALL: 'everything',
+  FUTURE: 'future',
+};
+
 export {DESCRIPTION, TYPES, CITIES, OFFERS};
-export {getOfferName, getOfferPrice, getArrayFromType};
+export {getOfferName, getOfferPrice, getArrayFromType, FilterType};

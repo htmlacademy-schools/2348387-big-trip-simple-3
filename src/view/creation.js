@@ -1,7 +1,7 @@
-import { createElement } from '../render.js';
 import { getArrayFromType, getOfferName, getOfferPrice, CITIES } from '../mock/const.js';
 import { fullDate } from '../dateAPI.js';
 import { getDestById } from '../mock/mock.js';
+import AbstractView from '../framework/view/abstract-view.js';
 
 const offerTemplateFactory = (offerIds, type) => getArrayFromType(type).map((offer) => {
   const ifChecked = offerIds.includes(offer) ? 'checked' : '';
@@ -124,27 +124,15 @@ const pointMenuFactory = (point) => {
 };
 
 
-class CreationFormView{
-
-  #element = null;
+class CreationFormView extends AbstractView {
 
   constructor(point) {
+    super();
     this.point = point;
   }
 
   get template() {
     return pointMenuFactory(this.point);
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }
 

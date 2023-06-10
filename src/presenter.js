@@ -3,7 +3,7 @@ import RedactionView from './view/redactionForm.js';
 import SortingView from './view/sort.js';
 import TripEventsView from './view/eventList.js';
 import EmptyEntryView from './view/emptyEntry.js';
-import {render} from './render.js';
+import {render} from './framework/render.js';
 
 
 class Presenter {
@@ -36,18 +36,18 @@ class Presenter {
       }
     };
 
-    pointView.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+    pointView.setClickHandler(() => {
       replacePointWithForm();
       document.addEventListener('keydown', closeFormOnEscape);
     });
 
-    redactionView.element.querySelector('.event__save-btn').addEventListener('submit', (evt) => {
+    redactionView.setSubmitHandler((evt) => {
       evt.preventDefault();
       replaceFormWithPoint();
       document.removeEventListener('keydown', closeFormOnEscape);
     });
 
-    redactionView.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+    redactionView.setClickHandler(() => {
       replaceFormWithPoint();
       document.removeEventListener('keydown', closeFormOnEscape);
     });

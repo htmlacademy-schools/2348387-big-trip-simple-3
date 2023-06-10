@@ -17,4 +17,8 @@ const updateItem = (items, update) => {
   ];
 };
 
-export {getRandInt, capitalize, updateItem};
+const diffByDay = (pa, pb) => pa.dateFrom.toDate() - pb.dateFrom.toDate();
+
+const diffByPrice = (pa, pb) => pa.price - pb.price;
+
+export {getRandInt, capitalize, updateItem, diffByDay, diffByPrice};

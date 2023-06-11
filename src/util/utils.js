@@ -24,19 +24,15 @@ const getMockText = (len) => {
   return mockText.slice(0, len);
 };
 
-const updateItem = (items, update) => {
-  const index = items.findIndex((item) => item.id === update.id);
-
-  if (index === -1) {
-    return items;
+const validateNumber = (num) => {
+  if (isNaN(num)) {
+    return 0;
+  } else if (num >= 0) {
+    return num;
   }
-
-  return [
-    ...items.slice(0, index),
-    update,
-    ...items.slice(index + 1),
-  ];
+  return -num;
 };
+
 
 const filter = {
   [FilterType.EVERYTHING]: (points) => points,
@@ -58,4 +54,4 @@ const sortPointsByPrice = (pa, pb) => pb.base_price - pa.base_price;
 const getIdFromTag = (tag) => +tag.id.split('-').slice(-1);
 
 export {filter, sort};
-export {getRandomInt, getFormattedDate, isEventUpcoming, getMockText, updateItem, sortPointsByDay, sortPointsByPrice, getIdFromTag, turnModelDateToFramework, compareDates};
+export {getRandomInt, getFormattedDate, isEventUpcoming, getMockText, validateNumber, sortPointsByDay, sortPointsByPrice, getIdFromTag, turnModelDateToFramework, compareDates};

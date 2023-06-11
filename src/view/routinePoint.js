@@ -1,5 +1,5 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import { getFormattedDate } from '../util/utils.js';
+import { getFormattedDate, validateNumber } from '../util/utils.js';
 import { destinationsStorage, offersStorage, getDefaultPoint } from '../mock/mock.js';
 
 const makePointSample = (point) => {
@@ -41,7 +41,7 @@ const makePointSample = (point) => {
       </p>
     </div>
     <p class="event__price">
-      &euro;&nbsp;<span class="event__price-value">${point.base_price}</span>
+    &euro;&nbsp;<span class="event__price-value">${validateNumber(point.base_price)}</span>
     </p>
     <h4 class="visually-hidden">Offers:</h4>
     <ul class="event__selected-offers">

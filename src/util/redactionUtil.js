@@ -1,6 +1,6 @@
 import { POINT_TYPES } from '../mock/const.js';
 import { destinationsStorage } from '../mock/mock.js';
-import { getFormattedDate } from '../util/utils.js';
+import { getFormattedDate, validateNumber } from '../util/utils.js';
 
 const wrapPointTypes = (id) => POINT_TYPES.map((pointType) => `
   <div class="event__type-item">
@@ -56,7 +56,7 @@ const makePointPriceSample = (id, price) => (`
       <span class="visually-hidden">Price</span>
       &euro;
     </label>
-    <input class="event__input  event__input--price" id="event-price-${id}" type="text" name="event-price" value="${price}">
+    <input class="event__input  event__input--price" id="event-price-${id}" type="text" name="event-price" value="${validateNumber(price)}">
   </div>
 `);
 

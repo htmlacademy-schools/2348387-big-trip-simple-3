@@ -1,5 +1,5 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import { destinationsStorage, offersStorage, getDefaultPoint } from '../mock/mock.js';
+import TripModel from '../model/tripModel.js';
 import { compareDates, getIdFromTag, turnModelDateToFramework } from '../util/utils.js';
 import { makePointEditSample } from '../util/redactionUtil.js';
 
@@ -9,17 +9,21 @@ import 'flatpickr/dist/flatpickr.min.css';
 class RedactionView extends AbstractStatefulView {
   _state = null;
   #datepickers = [];
+  #availableOffers = [];
+  #availableDestinations = [];
 
-  constructor(point = getDefaultPoint()) {
+  constructor(point = TripModel.defaultPoint(), availableOffers = [], availableDestinations = []) {
     super();
-    this._state = RedactionView.parsePointToState(point);
+    this._state = RedactionView.parsePointToState(point, availableOffers);
+    this.#availableOffers = availableOffers;
+    this.#availableDestinations = availableDestinations;
 
     this.#setInnerHandlers();
     this.#setDatepickers();
   }
 
   get template() {
-    return makePointEditSample(this._state);
+    return makePointEditSample(this._state, this.#availableDestinations);
   }
 
   removeElement = () => {
@@ -31,8 +35,8 @@ class RedactionView extends AbstractStatefulView {
     }
   };
 
-  reset = (point) => {
-    this.updateElement(RedactionView.parsePointToState(point));
+  reset = (point, availableOffers) => {
+    this.updateElement(RedactionView.parsePointToState(point, availableOffers));
   };
 
   _restoreHandlers = () => {
@@ -40,6 +44,7 @@ class RedactionView extends AbstractStatefulView {
     this.#setDatepickers();
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setDeleteClickHandler(this._callback.deleteClick);
+    this.setFormResetHandler(this._callback.formReset);
   };
 
   #setInnerHandlers = () => {
@@ -129,7 +134,7 @@ class RedactionView extends AbstractStatefulView {
   #destinationHandler = (evt) => {
     evt.preventDefault();
     const destination = evt.target.value;
-    const index = RedactionView.getDestinationId(destination);
+    const index = RedactionView.getDestinationId(destination, this.#availableDestinations);
     if (index !== -1) {
       this.updateElement({
         'destination': index,
@@ -170,9 +175,9 @@ class RedactionView extends AbstractStatefulView {
       .addEventListener('click', this.#formDeleteClickHandler);
   };
 
-  static parsePointToState = (point) => {
+  static parsePointToState = (point, availableOffers) => {
     const offs = [];
-    for (const off of Object.values(offersStorage)) {
+    for (const off of availableOffers) {
       offs.push({...off, 'isChecked': point.offers.includes(off.id)});
     }
     return {...point, 'state_offers': offs};
@@ -180,18 +185,13 @@ class RedactionView extends AbstractStatefulView {
 
   static parseStateToPoint = (state) => {
     const point = {...state};
-    const noffers = [];
-    point.state_offers.map((stoff) => {
-      if (stoff.isChecked) {
-        noffers.push(stoff.id);
-      }
-    });
+    const noffers = point.state_offers.filter((stoff) => stoff.isChecked);
     point.offers = noffers;
     delete point.state_offers;
     return point;
   };
 
-  static getDestinationId = (destinationName) => destinationsStorage.map((current) => current.name).indexOf(destinationName);
+  static getDestinationId = (destinationName, availableDestinations) => availableDestinations.map((current) => current.name).indexOf(destinationName) + 1;
 }
 
 export default RedactionView;

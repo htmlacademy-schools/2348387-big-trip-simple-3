@@ -1,29 +1,69 @@
 import Observable from '../framework/observable';
-import { generatePoints } from '../mock/mock.js';
-
-const POINT_COUNT = 0;
+import { UpdateType } from '../mock/const.js';
 
 class TripModel extends Observable {
-  #points = generatePoints(POINT_COUNT);
+  #pointsApiService = null;
+  #points = [];
+  #offers = [];
+  #destinations = [];
+
+  constructor (pointsApiService) {
+    super();
+    this.#pointsApiService = pointsApiService;
+  }
 
   get points() {
     return this.#points;
   }
 
-  updatePoint = (updateType, update) => {
+  get offers() {
+    return this.#offers;
+  }
+
+  get destinations() {
+    return this.#destinations;
+  }
+
+  init = async () => {
+    try {
+      this.#points = await this.#pointsApiService.points;
+    } catch(err) {
+      this.#points = [];
+    }
+
+    try {
+      this.#offers = await this.#pointsApiService.offers;
+    } catch(err) {
+      this.#offers = [];
+    }
+
+    try {
+      this.#destinations = await this.#pointsApiService.destinations;
+    } catch(err) {
+      this.#destinations = [];
+    }
+
+    this._notify(UpdateType.INIT);
+  };
+
+  updatePoint = async (updateType, update) => {
     const index = this.#points.findIndex((point) => point.id === update.id);
 
     if (index === -1) {
       throw new Error('Cant update unexisting point');
     }
 
-    this.#points = [
-      ...this.#points.slice(0, index),
-      update,
-      ...this.#points.slice(index + 1),
-    ];
-
-    this._notify(updateType, update);
+    try {
+      const updatedPoint = await this.#pointsApiService.updatePoint(update);
+      this.#points = [
+        ...this.#points.slice(0, index),
+        updatedPoint,
+        ...this.#points.slice(index + 1),
+      ];
+      this._notify(updateType, update);
+    } catch (err) {
+      throw new Error('Cant update point');
+    }
   };
 
   addPoint = (updateType, update) => {
@@ -50,6 +90,16 @@ class TripModel extends Observable {
 
     this._notify(updateType);
   };
+
+  static defaultPoint = () => ({
+    'id': 0,
+    'type': 'taxi',
+    'base_price': 0,
+    'date_from': '1970-01-01',
+    'date_to': '1970-01-02',
+    'destination': 0,
+    'offers': [],
+  });
 }
 
 export default TripModel;

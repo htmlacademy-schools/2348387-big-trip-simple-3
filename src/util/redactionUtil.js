@@ -1,5 +1,5 @@
 import { POINT_TYPES } from '../mock/const.js';
-import { destinationsStorage } from '../mock/mock.js';
+//import TripModel from '../model/tripModel.js';
 import { getFormattedDate, validateNumber } from '../util/utils.js';
 
 const wrapPointTypes = (id) => POINT_TYPES.map((pointType) => `
@@ -26,16 +26,16 @@ const makePointTypeListSample = (id) => (`
   </div>
 `);
 
-const makeDestinationListSample = () => destinationsStorage.map((destination) => (`<option value="${destination.name}"></option>`)).join('');
+const makeDestinationListSample = (availableDestinations) => availableDestinations.map((destination) => (`<option value="${destination.name}"></option>`)).join('');
 
-const makePointDestinationSample = (id, type, destination) => (`
+const makePointDestinationSample = (id, type, destination, availableDestinations) => (`
   <div class="event__field-group  event__field-group--destination">
     <label class="event__label  event__type-output" for="event-destination-${id}">
       ${type}
     </label>
     <input class="event__input  event__input--destination" id="event-destination-${id}" type="text" name="event-destination" value="${destination.name}" list="destination-list-${id}">
     <datalist id="destination-list-${id}">
-      ${makeDestinationListSample()}
+      ${makeDestinationListSample(availableDestinations)}
     </datalist>
   </div>
 `);
@@ -88,8 +88,7 @@ const makePointOffersSample = (stateOffers) => (`
 `);
 
 const getDestinationPicturesMarkup = (destination) => destination.pictures.map((pic) => `
-  <img class="event__photo" src="${pic.src}.jpg" alt="${pic.description}">
-`);
+  <img class="event__photo" src="${pic.src}" alt="${pic.description}">`).join('');
 
 const makePointDestDetailsSample = (destination) => (`
   <section class="event__section  event__section--destination">
@@ -103,11 +102,11 @@ const makePointDestDetailsSample = (destination) => (`
   </section>
 `);
 
-const makePointEditSample = (data) => {
-  const dataDestination = destinationsStorage[data.destination];
+const makePointEditSample = (data, availableDestinations) => {
+  const dataDestination = availableDestinations[data.destination - 1];
   const pointIconSample = makePointIconSample(data.id, data.type);
   const pointTypeListSample = makePointTypeListSample(data.id);
-  const pointDestinationSample = makePointDestinationSample(data.id, data.type, dataDestination);
+  const pointDestinationSample = makePointDestinationSample(data.id, data.type, dataDestination, availableDestinations);
   const pointTimeSample = makePointTimeSample(data.id, data.date_from, data.date_to);
   const pointPriceSample = makePointPriceSample(data.id, data.base_price);
   const pointOffersSample = makePointOffersSample(data.state_offers);

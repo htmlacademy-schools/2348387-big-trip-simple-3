@@ -1,6 +1,6 @@
 import {remove, render, RenderPosition} from '../framework/render.js';
 import RedactionView from '../view/redactionForm.js';
-import {UserAction, UpdateType} from '../mock/const.js';
+import {UserAction, UpdateType} from '../util/const.js';
 
 class NewPointPresenter {
   #pointListContainer = null;

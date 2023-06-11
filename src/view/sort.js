@@ -1,4 +1,4 @@
-import { SortType } from '../mock/const.js';
+import { SortType } from '../util/const.js';
 import AbstractView from '../framework/view/abstract-view.js';
 
 const makePointListSortingSample = (currentSortType) => `

@@ -1,4 +1,4 @@
-import { FilterType } from '../mock/const.js';
+import { FilterType } from './const.js';
 import dayjs from 'dayjs';
 
 const getDate = (date) => dayjs(date).format('MMM D');

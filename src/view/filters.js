@@ -1,5 +1,5 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import { FilterType } from '../mock/const.js';
+import { FilterType } from '../util/const.js';
 import { filter } from '../util/utils.js';
 
 const makePointFiltersSample = (currentFilter, points) => {

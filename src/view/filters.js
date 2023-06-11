@@ -1,46 +1,54 @@
 import AbstractView from '../framework/view/abstract-view.js';
+import { FilterType } from '../mock/const.js';
+import { filter } from '../util/utils.js';
 
-const makeFilterItemSample = (filter, currentFilterType) => `
-    <div class="trip-filters__filter">
-    <input
-      id="filter-${filter.name}"
-      class="trip-filters__filter-input  visually-hidden"
-      type="radio"
-      name="trip-filter"
-      value="${filter.type}"
-      ${filter.type === currentFilterType ? 'checked' : ''}>
-      <label class="trip-filters__filter-label" for="filter-${filter.name}">${filter.name}</label>
-    </div>`;
-
-const makeFilterSample = (filterItems, currentFilterType) => `
+const makePointFiltersSample = (currentFilter, points) => {
+  const futurePointsCount = filter['future'](points).length;
+  return `
     <form class="trip-filters" action="#" method="get">
-    ${filterItems.map((filter) => makeFilterItemSample(filter, currentFilterType)).join('')}
+      <div class="trip-filters__filter">
+        <input id="filter-everything" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="everything"
+        ${currentFilter === FilterType.EVERYTHING ? 'checked' : ''}>
+        <label class="trip-filters__filter-label" for="filter-everything">Everything</label>
+      </div>
+      <div class="trip-filters__filter">
+        <input id="filter-future" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="future"
+        ${currentFilter === FilterType.FUTURE ? 'checked' : ''}
+        ${futurePointsCount === 0 ? 'disabled' : ''}>
+        <label class="trip-filters__filter-label" for="filter-future">Future</label>
+      </div>
       <button class="visually-hidden" type="submit">Accept filter</button>
-    </form>`;
+    </form>
+  `;
+};
 
-class FilterFormView extends AbstractView {
-  #filters = null;
+class FilterView extends AbstractView {
   #currentFilter = null;
+  #points = null;
 
-  constructor(filters, currentFilterType) {
+  constructor(currentFilterType, points) {
     super();
-    this.#filters = filters;
     this.#currentFilter = currentFilterType;
+    this.#points = points;
   }
 
   get template() {
-    return makeFilterSample(this.#filters, this.#currentFilter);
+    return makePointFiltersSample(this.#currentFilter, this.#points);
   }
 
-  setFilterTypeChangeHandler = (callback) => {
-    this._callback.filterTypeChange = callback;
-    this.element.addEventListener('change', this.#filterTypeChangeHandler);
+  get selectedFilter() {
+    return this.#currentFilter;
+  }
+
+  setFilterChangeHandler = (callback) => {
+    this._callback.chageFilter = callback;
+    this.element.addEventListener('change', this.#filterChangeHandler);
   };
 
-  #filterTypeChangeHandler = (evt) => {
+  #filterChangeHandler = (evt) => {
     evt.preventDefault();
-    this._callback.filterTypeChange(evt.target.value);
+    this._callback.chageFilter(evt.target.value);
   };
 }
 
-export default FilterFormView;
+export default FilterView;

@@ -1,6 +1,7 @@
 import {render, replace, remove} from '../framework/render.js';
 import FilterView from '../view/filters.js';
 import {FilterType, UpdateType} from '../mock/const.js';
+import {filter} from '../util/utils.js';
 
 class FilterPresenter {
   #filterContainer = null;
@@ -18,25 +19,11 @@ class FilterPresenter {
     this.#filterModel.addObserver(this.#handleModelEvent);
   }
 
-  get filters() {
-    return [
-      {
-        type: FilterType.EVERYTHING,
-        name: 'EVERYTHING',
-      },
-      {
-        type: FilterType.FUTURE,
-        name: 'FUTURE',
-      },
-    ];
-  }
-
   init = () => {
-    const filters = this.filters;
     const prevFilterComponent = this.#filterComponent;
 
-    this.#filterComponent = new FilterView(filters, this.#filterModel.filter);
-    this.#filterComponent.setFilterTypeChangeHandler(this.#handleFilterTypeChange);
+    this.#filterComponent = new FilterView(this.#filterModel.filter, this.#pointsModel.points);
+    this.#filterComponent.setFilterChangeHandler(this.#handleFilterTypeChange);
 
     if (prevFilterComponent === null) {
       render(this.#filterComponent, this.#filterContainer);
@@ -58,6 +45,22 @@ class FilterPresenter {
 
     this.#filterModel.setFilter(UpdateType.MAJOR, filterType);
   };
+
+  get filters() {
+    const points = this.#pointsModel.points;
+    return [
+      {
+        type: FilterType.EVERYTHING,
+        name: 'EVERYTHING',
+        count: filter[FilterType.EVERYTHING](points).length,
+      },
+      {
+        type: FilterType.FUTURE,
+        name: 'FUTURE',
+        count: filter[FilterType.FUTURE](points).length,
+      },
+    ];
+  }
 }
 
 export default FilterPresenter;

@@ -1,3 +1,6 @@
+const AUTHORIZATION = 'Basic kTy9gIdsz2317rD';
+const END_POINT = 'https://18.ecmascript.pages.academy/big-trip';
+
 const UserAction = {
   UPDATE_POINT: 'UPDATE_POINT',
   ADD_POINT: 'ADD_POINT',
@@ -42,4 +45,5 @@ const Mode = {
   EDITING: 'EDITING',
 };
 
-export {POINT_TEMPLATE, FilterType, SortType, UserAction, UpdateAction, TimeLimit, Mode};
+export { AUTHORIZATION, END_POINT, POINT_TEMPLATE };
+export { FilterType, SortType, UserAction, UpdateAction, TimeLimit, Mode };

@@ -19,6 +19,8 @@ class PointPresenter {
 
   #point = null;
   #mode = Mode.DEFAULT;
+  #availableOffers = [];
+  #availableDestinations = [];
 
   constructor(pointListContainer, changeData, changeMode) {
     this.#pointListContainer = pointListContainer;
@@ -26,14 +28,16 @@ class PointPresenter {
     this.#changeMode = changeMode;
   }
 
-  init(point) {
+  init(point, availableOffers, availableDestinations) {
     this.#point = point;
+    this.#availableOffers = availableOffers;
+    this.#availableDestinations = availableDestinations;
 
     const prevPointComponent = this.#pointComponent;
     const prevPointEditComponent = this.#pointEditComponent;
 
-    this.#pointComponent = new PointView(point);
-    this.#pointEditComponent = new PointEditView(point);
+    this.#pointComponent = new PointView(point, availableOffers, availableDestinations);
+    this.#pointEditComponent = new PointEditView(point, availableOffers, availableDestinations);
 
     this.#pointComponent.setEditButtonClickHandler(this.#handleEditClick);
     this.#pointEditComponent.setFormSubmitHandler(this.#handleFormSubmit);
@@ -67,7 +71,7 @@ class PointPresenter {
 
   resetView = () => {
     if (this.#mode !== Mode.DEFAULT) {
-      this.#pointEditComponent.reset(this.#point);
+      this.#pointEditComponent.reset(this.#point, this.#availableOffers);
       this.#replaceFormToPoint();
     }
   };
@@ -93,7 +97,7 @@ class PointPresenter {
   #escKeyDownHandler = (evt) => {
     if (evt.keyCode === 27) {
       evt.preventDefault();
-      this.#pointEditComponent.reset(this.#point);
+      this.#pointEditComponent.reset(this.#point, this.#availableOffers);
       this.#replaceFormToPoint();
     }
   };

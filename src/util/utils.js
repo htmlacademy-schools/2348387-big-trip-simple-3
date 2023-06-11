@@ -53,5 +53,13 @@ const sortPointsByPrice = (pa, pb) => pb.base_price - pa.base_price;
 
 const getIdFromTag = (tag) => +tag.id.split('-').slice(-1);
 
+const getAvailableOffers = (type, offers) => {
+  for (const category of offers) {
+    if (category.type === type) {
+      return category.offers;
+    }
+  }
+};
+
 export {filter, sort};
-export {getRandomInt, getFormattedDate, isEventUpcoming, getMockText, validateNumber, sortPointsByDay, sortPointsByPrice, getIdFromTag, turnModelDateToFramework, compareDates};
+export {getRandomInt, getFormattedDate, isEventUpcoming, getMockText, validateNumber, sortPointsByDay, sortPointsByPrice, getIdFromTag, turnModelDateToFramework, compareDates, getAvailableOffers};

@@ -1,5 +1,5 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import { destinationsStorage, offersStorage } from '../mock/mock.js';
+import { destinationsStorage, offersStorage, getDefaultPoint } from '../mock/mock.js';
 import { compareDates, getIdFromTag, turnModelDateToFramework } from '../util/utils.js';
 import { makePointEditSample } from '../util/redactionUtil.js';
 
@@ -10,7 +10,7 @@ class RedactionView extends AbstractStatefulView {
   _state = null;
   #datepickers = [];
 
-  constructor(point) {
+  constructor(point = getDefaultPoint()) {
     super();
     this._state = RedactionView.parsePointToState(point);
 
@@ -39,6 +39,7 @@ class RedactionView extends AbstractStatefulView {
     this.#setInnerHandlers();
     this.#setDatepickers();
     this.setFormSubmitHandler(this._callback.formSubmit);
+    this.setDeleteClickHandler(this._callback.deleteClick);
   };
 
   #setInnerHandlers = () => {
@@ -136,15 +137,25 @@ class RedactionView extends AbstractStatefulView {
     }
   };
 
-  setFormSubmitHandler = (callback) => {
-    this._callback.formSubmit = callback;
-    this.element.querySelector('.event__save-btn')
-      .addEventListener('click', this.#formSubmitHandler);
+  #formResetHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.formReset();
   };
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
     this._callback.formSubmit(RedactionView.parseStateToPoint(this._state));
+  };
+
+  #formDeleteClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.deleteClick(RedactionView.parseStateToPoint(this._state));
+  };
+
+  setFormSubmitHandler = (callback) => {
+    this._callback.formSubmit = callback;
+    this.element.querySelector('.event__save-btn')
+      .addEventListener('click', this.#formSubmitHandler);
   };
 
   setFormResetHandler = (callback) => {
@@ -153,9 +164,10 @@ class RedactionView extends AbstractStatefulView {
       .addEventListener('click', this.#formResetHandler);
   };
 
-  #formResetHandler = (evt) => {
-    evt.preventDefault();
-    this._callback.formReset();
+  setDeleteClickHandler = (callback) => {
+    this._callback.deleteClick = callback;
+    this.element.querySelector('.event__reset-btn')
+      .addEventListener('click', this.#formDeleteClickHandler);
   };
 
   static parsePointToState = (point) => {

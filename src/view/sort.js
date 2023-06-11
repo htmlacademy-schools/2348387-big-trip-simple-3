@@ -21,16 +21,20 @@ const makeSortSample = (currentSort) => `
 class SortView extends AbstractView {
   #currentSort = SortType.DAY;
 
+  constructor (currentSort) {
+    super();
+    this.#currentSort = currentSort;
+  }
+
   get template() {
     return makeSortSample(this.#currentSort);
   }
 
   #sortTypeChangeHandler = (evt) => {
+    evt.preventDefault();
     if (evt.target.tagName !== 'LABEL') {
       return;
     }
-
-    evt.preventDefault();
     this.#currentSort = evt.target.dataset.sortType;
     this._callback.sortTypeChange(evt.target.dataset.sortType);
   };

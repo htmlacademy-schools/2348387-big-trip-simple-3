@@ -79,7 +79,7 @@ const generatePoints = (numOfPoints) => {
 const getDefaultPoint = () => (Object.assign({}, {
   'id': 0,
   'type': POINT_TYPES[0],
-  'base_price': null,
+  'base_price': 0,
   'date_from': dayjs(),
   'date_to': dayjs(),
   'destination': 0,

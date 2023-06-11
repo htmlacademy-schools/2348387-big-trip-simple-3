@@ -1,8 +1,8 @@
 import {render, replace, remove} from '../framework/render.js';
-import PointView from '../view/routinePoint.js';
-import { UserAction, UpdateType } from '../util/const.js';
+import PointView from '../view/routinePointView.js';
+import { UserAction, UpdateAction } from '../util/const.js';
 import { isDatesEqual } from '../util/utils.js';
-import RedactionView from '../view/redactionForm.js';
+import RedactionView from '../view/redactionFormView.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -120,7 +120,7 @@ class PointPresenter {
 
     this.#changeData(
       UserAction.UPDATE_POINT,
-      isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
+      isMinorUpdate ? UpdateAction.MINOR : UpdateAction.PATCH,
       update,
     );
   };
@@ -141,7 +141,7 @@ class PointPresenter {
     this.#pointEditorComponent.removeEscKeydownHandler();
     this.#changeData(
       UserAction.DELETE_POINT,
-      UpdateType.MINOR,
+      UpdateAction.MINOR,
       point,
     );
   };

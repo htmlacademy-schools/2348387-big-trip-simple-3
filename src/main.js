@@ -3,7 +3,7 @@ import ListPresenter from './presenter/presenterList.js';
 import TripModel from './model/tripModel.js';
 import FilterModel from './model/filterModel.js';
 import FilterPresenter from './presenter/presenterFilter.js';
-import NewPointButtonView from './view/newPointButton.js';
+import NewPointButtonView from './view/newPointButtonView.js';
 import PointsApiService from './util/API.js';
 
 const AUTHORIZATION = 'Basic kTy9gIdsz2317rD';
@@ -17,10 +17,10 @@ const tripPointsModel = new TripModel(new PointsApiService(END_POINT, AUTHORIZAT
 const filterModel = new FilterModel();
 
 const tripPresenter = new ListPresenter(pointsContainer, tripPointsModel, filterModel);
-tripPresenter.init();
+tripPresenter.initialize();
 const filterPresenter = new FilterPresenter(filtersContainer, filterModel, tripPointsModel);
 
-filterPresenter.init();
+filterPresenter.initialize();
 
 const newPointButtonComponent = new NewPointButtonView();
 
@@ -33,7 +33,7 @@ const handleNewPointButtonClick = () => {
   newPointButtonComponent.element.disabled = true;
 };
 
-tripPointsModel.init()
+tripPointsModel.initialize()
   .catch(() => {
     newPointButtonComponent.element.disabled = true;
   })

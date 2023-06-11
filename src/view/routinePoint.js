@@ -1,8 +1,8 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import { getFormattedDate, validateNumber } from '../util/utils.js';
-import TripModel from '../model/tripModel.js';
+import { getFormattedDate, validateNumber, getAvailableOffers } from '../util/utils.js';
 
 const makePointSample = (point, availableOffers, availableDestinations) => {
+  availableOffers = getAvailableOffers(point.type, availableOffers);
   const pointIcon = `img/icons/${point.type}.png`;
   const getOffersMarkup = () => {
     if (point.offers.length === 0) {
@@ -14,13 +14,15 @@ const makePointSample = (point, availableOffers, availableDestinations) => {
     } else {
       const markup = [];
       for (const offer of availableOffers) {
-        markup.push(`
-          <li class="event__offer">
-            <span class="event__offer-title">${offer.title}</span>
-            &plus;&euro;&nbsp;
-            <span class="event__offer-price">${offer.price}</span>
-          </li>
-        `);
+        if (point.offers.includes(offer.id)) {
+          markup.push(`
+            <li class="event__offer">
+              <span class="event__offer-title">${offer.title}</span>
+              &plus;&euro;&nbsp;
+              <span class="event__offer-price">${offer.price}</span>
+            </li>
+          `);
+        }
       }
       return markup.join('\n');
     }
@@ -57,7 +59,7 @@ class PointView extends AbstractView {
   #availableOffers = [];
   #availableDestinations = [];
 
-  constructor(point = TripModel.defaultPoint(), availableOffers = [], availableDestinations = []) {
+  constructor(point, availableOffers = [], availableDestinations = []) {
     super();
     this.#element = point;
     this.#availableOffers = availableOffers;

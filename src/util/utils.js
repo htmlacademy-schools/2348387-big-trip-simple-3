@@ -3,7 +3,7 @@ import { SortType, FilterType, MODEL_DATE_FORMAT } from '../mock/const.js';
 
 const getRandomInt = (upperBound = 100) => (Math.floor(Math.random() * upperBound));
 
-const getFormattedDate = (eventDate, format = MODEL_DATE_FORMAT) => dayjs(eventDate).format(format);
+const getFormattedDate = (eventDate = dayjs(), format = MODEL_DATE_FORMAT) => dayjs(eventDate).format(format);
 
 const isEventUpcoming = (date) => !dayjs(date).isBefore(dayjs(), 'day');
 
@@ -11,6 +11,7 @@ const turnModelDateToFramework = (date) => dayjs(date).format('DD/MM/YY HH:mm');
 
 const compareDates = (a, b) => dayjs(a).diff(dayjs(b)) < 0;
 
+const getIdFromTag = (tag) => +tag.id.split('-').slice(-1);
 
 const getMockText = (len) => {
   const mockText = `
@@ -33,6 +34,42 @@ const validateNumber = (num) => {
   return -num;
 };
 
+const getAvailableOffers = (type, offers) => {
+  for (const category of offers) {
+    if (category.type === type) {
+      return category.offers;
+    }
+  }
+};
+
+const generateAuthorizationKey = (length) => {
+  let result = '';
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const charactersLength = characters.length;
+  let counter = 0;
+  while (counter < length) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    counter += 1;
+  }
+  return result;
+};
+
+const getListElementsNamesList = (availableDestinations) =>
+  availableDestinations.map((element) => element.name);
+
+const getListElementId = (destinationName, availableDestinations) =>
+  getListElementsNamesList(availableDestinations)
+    .indexOf(destinationName) + 1;
+
+const defaultPoint = () => Object.assign({}, {
+  'id': 0,
+  'type': 'taxi',
+  'base_price': 0,
+  'date_from': getFormattedDate(),
+  'date_to': getFormattedDate(),
+  'destination': 1,
+  'offers': [],
+});
 
 const filter = {
   [FilterType.EVERYTHING]: (points) => points,
@@ -51,15 +88,6 @@ const sortPointsByDay = (pa, pb) => dayjs(pa.date_from).toDate() - dayjs(pb.date
 
 const sortPointsByPrice = (pa, pb) => pb.base_price - pa.base_price;
 
-const getIdFromTag = (tag) => +tag.id.split('-').slice(-1);
-
-const getAvailableOffers = (type, offers) => {
-  for (const category of offers) {
-    if (category.type === type) {
-      return category.offers;
-    }
-  }
-};
-
 export {filter, sort};
-export {getRandomInt, getFormattedDate, isEventUpcoming, getMockText, validateNumber, sortPointsByDay, sortPointsByPrice, getIdFromTag, turnModelDateToFramework, compareDates, getAvailableOffers};
+export {getRandomInt, getFormattedDate, isEventUpcoming, getMockText, validateNumber, sortPointsByDay, sortPointsByPrice,
+  getIdFromTag, turnModelDateToFramework, compareDates, getAvailableOffers, generateAuthorizationKey, getListElementsNamesList, getListElementId, defaultPoint};

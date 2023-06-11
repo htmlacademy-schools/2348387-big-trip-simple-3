@@ -5,7 +5,7 @@ import AbstractView from './abstract-view.js';
  */
 export default class AbstractStatefulView extends AbstractView {
   /** @type {Object} Объект состояния */
-  _state = {};
+  _currnentState = {};
 
   /**
    * Метод для обновления состояния и перерисовки элемента
@@ -34,7 +34,7 @@ export default class AbstractStatefulView extends AbstractView {
    * @param {Object} update Объект с обновлённой частью состояния
    */
   _setState(update) {
-    this._state = structuredClone({...this._state, ...update});
+    this._currnentState = structuredClone({...this._currnentState, ...update});
   }
 
   /** Метод для перерисовки элемента */

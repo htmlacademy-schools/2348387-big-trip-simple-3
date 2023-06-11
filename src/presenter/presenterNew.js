@@ -1,6 +1,6 @@
 import {remove, render, RenderPosition} from '../framework/render.js';
-import RedactionView from '../view/redactionForm.js';
-import {UserAction, UpdateType} from '../util/const.js';
+import RedactionView from '../view/redactionFormView.js';
+import {UserAction, UpdateAction} from '../util/const.js';
 
 class NewPointPresenter {
   #pointListContainer = null;
@@ -65,7 +65,7 @@ class NewPointPresenter {
   #handleFormSubmit = (point) => {
     this.#changeData(
       UserAction.ADD_POINT,
-      UpdateType.MINOR,
+      UpdateAction.MINOR,
       point,
     );
   };

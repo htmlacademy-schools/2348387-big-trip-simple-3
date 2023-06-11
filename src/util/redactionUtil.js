@@ -1,24 +1,14 @@
 import { getFullDataTime } from './utils.js';
-
 import 'flatpickr/dist/flatpickr.min.css';
 
-const POINT_TEMPLATE = {
-  type: 'flight',
-  dateFrom: new Date(),
-  dateTo: new Date(),
-  basePrice: '',
-  offers: new Array(),
-  destination: null,
-};
+const makeDestinationSample = (destinationId, availableDestinationSet) => {
+  const {description, pictures} = availableDestinationSet[destinationId - 1];
 
-const makeDestinationSample = (destination, availableDestinations) => {
-  const {description, pictures} = availableDestinations[destination - 1];
-
-  const picturesSection = pictures
-    .map(({src, description: photoDescription}) => `<img class="event__photo" src="${src}" alt="${photoDescription}">`)
+  const picturesSection = pictures.map(({src: source, description: photoDescription}) => `<img class="event__photo" src="${source}" alt="${photoDescription}">`)
     .join('');
 
-  return (destination) ? `
+  if (destinationId) {
+    return `
     <section class="event__section  event__section--destination">
         <h3 class="event__section-title  event__section-title--destination">Destination</h3>
         <p class="event__destination-description">${description}</p>
@@ -28,8 +18,9 @@ const makeDestinationSample = (destination, availableDestinations) => {
             ${picturesSection}
           </div>
         </div>
-      </section>
-  ` : '';
+      </section>`;
+  }
+  return '';
 };
 
 const makeOffersSample = (type, offers, availableOffers) => {
@@ -169,5 +160,5 @@ const makePointEditorSample = (data, isPointNew, availableDestinations, availabl
 `;
 };
 
-export {POINT_TEMPLATE, makePointEditorSample};
+export {makePointEditorSample};
 

@@ -1,24 +1,28 @@
-import { FilterType } from '../mock/const.js';
 import AbstractView from '../framework/view/abstract-view.js';
 
-const messages = {
-  [FilterType.EVERYTHING]: 'Click New Event to create your first point',
-  [FilterType.FUTURE]: 'There are no future events now',
+const makeEmptyListSample = (filter, isError) => {
+  if (!isError) {
+    if (filter === 'everything') {
+      return '<p class="trip-events__msg">Click New Event to create your first point</p>';
+    }
+    return '<p class="trip-events__msg">There are no future events now</p>';
+  }
+  return '<p class="trip-events__msg">Something went wrong. Please try again later</p>';
 };
 
-const createEmptyListMessageTemplate = (filterType) => `<p class="trip-events__msg">${messages[filterType]}</p>`;
-
-
 class EmptyListView extends AbstractView {
-  #filterType = null;
+  #currentFilter = null;
+  #isError = null;
 
-  constructor (filterType) {
+  constructor(filter, isError) {
     super();
-    this.#filterType = filterType;
+    this.#currentFilter = filter;
+    this.#isError = isError;
   }
 
   get template() {
-    return createEmptyListMessageTemplate(this.#filterType);
+    return makeEmptyListSample(this.#currentFilter, this.#isError);
   }
 }
+
 export default EmptyListView;

@@ -1,10 +1,10 @@
 import AbstractView from '../framework/view/abstract-view.js';
 
-const createNewPointButtonTemplate = () => '<button class="trip-main__event-add-btn  btn  btn--big  btn--yellow" type="button">New event</button>';
+const makeNewPointButtonSample = () => '<button class="trip-main__event-add-btn  btn  btn--big  btn--yellow" type="button">New event</button>';
 
 class NewPointButtonView extends AbstractView {
   get template() {
-    return createNewPointButtonTemplate();
+    return makeNewPointButtonSample();
   }
 
   setClickHandler = (callback) => {

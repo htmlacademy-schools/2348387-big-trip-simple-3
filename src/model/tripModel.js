@@ -1,8 +1,9 @@
-import Observable from '../framework/observable';
+import Observable from '../framework/observable.js';
 import { UpdateType } from '../mock/const.js';
 
-class TripModel extends Observable {
+class PointsModel extends Observable {
   #pointsApiService = null;
+
   #points = [];
   #offers = [];
   #destinations = [];
@@ -60,46 +61,41 @@ class TripModel extends Observable {
         updatedPoint,
         ...this.#points.slice(index + 1),
       ];
+
       this._notify(updateType, update);
     } catch (err) {
       throw new Error('Cant update point');
     }
   };
 
-  addPoint = (updateType, update) => {
-    this.#points = [
-      update,
-      ...this.#points,
-    ];
-    //console.log(this.#points.length);
-
-    this._notify(updateType, update);
+  addPoint = async (updateType, update) => {
+    try {
+      const newPoint = await this.#pointsApiService.addPoint(update);
+      this.#points = [newPoint, ...this.#points];
+      this._notify(updateType, newPoint);
+    } catch(err) {
+      throw new Error('Cant add point');
+    }
   };
 
-  deletePoint = (updateType, update) => {
+  deletePoint = async (updateType, update) => {
     const index = this.#points.findIndex((point) => point.id === update.id);
 
     if (index === -1) {
       throw new Error('Cant delete unexisting points');
     }
 
-    this.#points = [
-      ...this.#points.slice(0, index),
-      ...this.#points.slice(index + 1),
-    ];
-
-    this._notify(updateType);
+    try {
+      await this.#pointsApiService.deletePoint(update);
+      this.#points = [
+        ...this.#points.slice(0, index),
+        ...this.#points.slice(index + 1),
+      ];
+      this._notify(updateType);
+    } catch(err) {
+      throw new Error('Cant delete point');
+    }
   };
-
-  static defaultPoint = () => ({
-    'id': 0,
-    'type': 'taxi',
-    'base_price': 0,
-    'date_from': '1970-01-01',
-    'date_to': '1970-01-02',
-    'destination': 0,
-    'offers': [],
-  });
 }
 
-export default TripModel;
+export default PointsModel;

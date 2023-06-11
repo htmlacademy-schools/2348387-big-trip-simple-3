@@ -1,7 +1,7 @@
 import {remove, render, RenderPosition} from '../framework/render.js';
 import RedactionView from '../view/redactionForm.js';
 import {UserAction, UpdateType} from '../mock/const.js';
-
+import { defaultPoint } from '../util/utils.js';
 
 class NewPointPresenter {
   #pointListContainer = null;
@@ -14,14 +14,33 @@ class NewPointPresenter {
     this.#changeData = changeData;
   }
 
-  init = (callback) => {
+  setSaving = () => {
+    this.#pointEditComponent.updateElement({
+      isDisabled: true,
+      isSaving: true,
+    });
+  };
+
+  setAborting = () => {
+    const resetFormState = () => {
+      this.#pointEditComponent.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#pointEditComponent.shake(resetFormState);
+  };
+
+  init = (callback, availableOffers, availableDestinations) => {
     this.#destroyCallback = callback;
 
     if (this.#pointEditComponent !== null) {
       return;
     }
 
-    this.#pointEditComponent = new RedactionView();
+    this.#pointEditComponent = new RedactionView(defaultPoint(), availableOffers, availableDestinations);
     this.#pointEditComponent.setFormSubmitHandler(this.#handleFormSubmit);
     this.#pointEditComponent.setDeleteClickHandler(this.#handleDeleteClick);
 
@@ -47,7 +66,7 @@ class NewPointPresenter {
     this.#changeData(
       UserAction.ADD_POINT,
       UpdateType.MINOR,
-      {id: 4, ...point},
+      point,
     );
     this.destroy();
   };

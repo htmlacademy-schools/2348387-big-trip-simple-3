@@ -1,4 +1,4 @@
-import { UpdateType } from '../mock/const.js';
+import { UpdateType } from '../util/const.js';
 import Observable from '../framework/observable.js';
 
 class TripModel extends Observable {

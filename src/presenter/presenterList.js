@@ -4,7 +4,7 @@ import PointPresenter from './presenterPoints.js';
 import NewPointPresenter from './presenterNew';
 import EmptyListView from '../view/emptyEntry';
 import LoadingView from '../view/loading';
-import { SortType, UserAction, UpdateType, FilterType } from '../mock/const.js';
+import { SortType, UserAction, UpdateType, FilterType } from '../util/const.js';
 import { filter, sortDays, sortPrices } from '../util/utils.js';
 import EventListView from '../view/eventList';
 import SortingView from '../view/sort';

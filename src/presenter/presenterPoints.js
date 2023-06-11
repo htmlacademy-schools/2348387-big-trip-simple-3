@@ -1,6 +1,6 @@
 import {render, replace, remove} from '../framework/render.js';
 import PointView from '../view/routinePoint.js';
-import { UserAction, UpdateType } from '../mock/const.js';
+import { UserAction, UpdateType } from '../util/const.js';
 import { isDatesEqual } from '../util/utils.js';
 import RedactionView from '../view/redactionForm.js';
 

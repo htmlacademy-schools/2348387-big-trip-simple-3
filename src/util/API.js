@@ -1,6 +1,6 @@
 import ApiService from '../framework/api-service.js';
 
-const Method = {
+const APIMethod = {
   GET: 'GET',
   PUT: 'PUT',
   POST: 'POST',
@@ -23,28 +23,6 @@ class PointsApiService extends ApiService {
       .then(ApiService.parseResponse);
   }
 
-  addPoint = async (point) => {
-    const response = await this._load({
-      url: 'points',
-      method: Method.POST,
-      body: JSON.stringify(this.#adaptToServer(point)),
-      headers: new Headers({'Content-Type': 'application/json'}),
-    });
-
-    const parsedResponse = await ApiService.parseResponse(response);
-
-    return parsedResponse;
-  };
-
-  deletePoint = async (point) => {
-    const response = await this._load({
-      url: `points/${point.id}`,
-      method: Method.DELETE,
-    });
-
-    return response;
-  };
-
   #adaptToServer = (point) => {
     const adaptedPoint = {...point,
       'base_price': point.basePrice,
@@ -60,9 +38,22 @@ class PointsApiService extends ApiService {
   };
 
   updatePoint = async (point) => {
-    const response = await this._load({
+    const responseAwaited = await this._load({
       url: `points/${point.id}`,
-      method: Method.PUT,
+      method: APIMethod.PUT,
+      body: JSON.stringify(this.#adaptToServer(point)),
+      headers: new Headers({'Content-Type': 'application/json'}),
+    });
+
+    const parsedResponse = await ApiService.parseResponse(responseAwaited);
+
+    return parsedResponse;
+  };
+
+  addPoint = async (point) => {
+    const response = await this._load({
+      url: 'points',
+      method: APIMethod.POST,
       body: JSON.stringify(this.#adaptToServer(point)),
       headers: new Headers({'Content-Type': 'application/json'}),
     });
@@ -70,6 +61,15 @@ class PointsApiService extends ApiService {
     const parsedResponse = await ApiService.parseResponse(response);
 
     return parsedResponse;
+  };
+
+  deletePoint = async (point) => {
+    const response = await this._load({
+      url: `points/${point.id}`,
+      method: APIMethod.DELETE,
+    });
+
+    return response;
   };
 }
 

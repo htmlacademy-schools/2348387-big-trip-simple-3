@@ -1,3 +1,10 @@
+const UserAction = {
+  UPDATE_POINT: 'UPDATE_POINT',
+  ADD_POINT: 'ADD_POINT',
+  DELETE_POINT: 'DELETE_POINT',
+};
+
+
 const UpdateAction = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
@@ -11,15 +18,9 @@ const FilterType = {
   FUTURE: 'future',
 };
 
-const SortType = { //МЯЯЯУ?
+const SortType = {
   DAY: 'day',
   PRICE: 'price',
-};
-
-const UserAction = {
-  UPDATE_POINT: 'UPDATE_POINT',
-  ADD_POINT: 'ADD_POINT',
-  DELETE_POINT: 'DELETE_POINT',
 };
 
 const TimeLimit = {
@@ -27,4 +28,18 @@ const TimeLimit = {
   UPPER_LIMIT: 1000,
 };
 
-export {FilterType, SortType, UserAction, UpdateAction, TimeLimit};
+const POINT_TEMPLATE = {
+  type: 'flight',
+  dateFrom: new Date(),
+  dateTo: new Date(),
+  basePrice: '',
+  offers: new Array(),
+  destination: null,
+};
+
+const Mode = {
+  DEFAULT: 'DEFAULT',
+  EDITING: 'EDITING',
+};
+
+export {POINT_TEMPLATE, FilterType, SortType, UserAction, UpdateAction, TimeLimit, Mode};

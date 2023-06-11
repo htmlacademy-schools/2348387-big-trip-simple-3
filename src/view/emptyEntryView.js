@@ -1,27 +1,18 @@
 import AbstractView from '../framework/view/abstract-view.js';
-
-const makeEmptyListSample = (filter, isError) => {
-  if (!isError) {
-    if (filter === 'everything') {
-      return '<p class="trip-events__msg">Click New Event to create your first point</p>';
-    }
-    return '<p class="trip-events__msg">There are no future events now</p>';
-  }
-  return '<p class="trip-events__msg">Something went wrong. Please try again later</p>';
-};
+import { makeEmptyListSample } from '../util/utils.js';
 
 class EmptyListView extends AbstractView {
-  #currentFilter = null;
+  #activeFilter = null;
   #isError = null;
 
   constructor(filter, isError) {
     super();
-    this.#currentFilter = filter;
+    this.#activeFilter = filter;
     this.#isError = isError;
   }
 
   get template() {
-    return makeEmptyListSample(this.#currentFilter, this.#isError);
+    return makeEmptyListSample(this.#activeFilter, this.#isError);
   }
 }
 

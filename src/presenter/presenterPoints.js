@@ -1,13 +1,8 @@
 import {render, replace, remove} from '../framework/render.js';
 import PointView from '../view/routinePointView.js';
-import { UserAction, UpdateAction } from '../util/const.js';
+import { UserAction, UpdateAction, Mode } from '../util/const.js';
 import { isDatesEqual } from '../util/utils.js';
 import RedactionView from '../view/redactionFormView.js';
-
-const Mode = {
-  DEFAULT: 'DEFAULT',
-  EDITING: 'EDITING',
-};
 
 class PointPresenter {
   #pointComponent = null;

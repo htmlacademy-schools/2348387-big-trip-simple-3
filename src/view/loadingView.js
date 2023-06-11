@@ -1,6 +1,5 @@
 import AbstractView from '../framework/view/abstract-view.js';
-
-const makeNoTaskSample = () => ('<p class="trip-events__msg">Loading...</p>');
+import { makeNoTaskSample } from '../util/utils.js';
 
 class LoadingView extends AbstractView {
   get template() {

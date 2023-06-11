@@ -1,56 +1,34 @@
-import { isFormValid } from '../util/utils.js';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import flatpickr from 'flatpickr';
-import { POINT_TEMPLATE, makePointEditorSample } from '../util/redactionUtil.js';
-
+import { makePointEditorSample } from '../util/redactionUtil.js';
+import { POINT_TEMPLATE } from '../util/const.js';
+import { isFormValid, parsePointToState, parseStateToPoint } from '../util/utils.js';
 
 class RedactionView extends AbstractStatefulView {
-  #datepicker = {};
-  #isPointNew = false;
-  _state = null;
+  #availableDestinationSet;
+  #availableOffersSet;
+  #isNewPoint;
+  _currnentState;
 
-  #availableDestinations = null;
-  #availableOffers = null;
+  #datepickerSet = {};
 
   constructor(destinations, offers, point = POINT_TEMPLATE) {
     super();
+    this.#availableDestinationSet = destinations;
+    this.#availableOffersSet = offers;
+    this.#isNewPoint = (point === POINT_TEMPLATE);
+    this._currnentState = parsePointToState(point);
 
-    this.#availableDestinations = destinations;
-    this.#availableOffers = offers;
-
-    this.#isPointNew = (point === POINT_TEMPLATE);
-    this._state = RedactionView.parsePointToState(point);
-
-    this.#setInnerHandlers();
-    this.#setDateToPicker();
-    this.#setDateFromPicker();
-
-
+    this.#setHandlers();
+    this.#setDateEndPicker();
+    this.#setDateStartPicker();
   }
-
-  static parsePointToState = (point) => ({...point,
-    isDestination: point.destination !== null,
-    isSaving: false,
-    isDeleting: false,
-  });
-
-  static parseStateToPoint = (state) => {
-    const point = {...state};
-    if (!point.isDestination) {
-      point.destination = null;
-    }
-    delete point.isDestination;
-    delete point.isSaving;
-    delete point.isDeleting;
-
-    return point;
-  };
 
   get template() {
-    return makePointEditorSample(this._state, this.#isPointNew, this.#availableDestinations, this.#availableOffers);
+    return makePointEditorSample(this._currnentState, this.#isNewPoint, this.#availableDestinationSet, this.#availableOffersSet);
   }
 
-  #setInnerHandlers = () => {
+  #setHandlers = () => {
     this.element.querySelector('.event__type-list')
       .addEventListener('change', this.#changeType);
     this.element.querySelector('.event__input--destination')
@@ -61,52 +39,38 @@ class RedactionView extends AbstractStatefulView {
       ?.addEventListener('change', this.#changeOffers);
   };
 
-  _restoreHandlers = () => {
-    this.#setInnerHandlers();
-    this.setFormSubmitHandler(this._callback.formSubmit);
-    this.setCloseButtonClickHandler(this._callback.closeForm);
-    this.setDeleteButtonClickHandler(this._callback.delete);
-
-    this.#setDateToPicker();
-    this.#setDateFromPicker();
+  #changeDateEnd = ([userDate]) => {
+    this._setState({ dateTo: userDate });
   };
 
-  #changeDateTo = ([userDate]) => {
-    this._setState({
-      dateTo: userDate,
-    });
-  };
-
-  #setDateToPicker = () => {
+  #setDateEndPicker = () => {
     const dateToPickr = flatpickr(
       this.element.querySelector('[name="event-end-time"]'),
       {
         enableTime: true,
         dateFormat: 'Y/m/d H:i',
-        defaultDate: this._state.dateTo,
-        onChange: this.#changeDateTo,
+        defaultDate: this._currnentState.dateTo,
+        onChange: this.#changeDateEnd,
       },
     );
-    this.#datepicker.dateTo = dateToPickr;
+    this.#datepickerSet.dateTo = dateToPickr;
   };
 
-  #changeDateFrom = ([userDate]) => {
-    this._setState({
-      dateFrom: userDate,
-    });
+  #changeDateStart = ([userDate]) => {
+    this._setState({ dateFrom: userDate });
   };
 
-  #setDateFromPicker = () => {
+  #setDateStartPicker = () => {
     const dateFromPickr = flatpickr(
       this.element.querySelector('[name="event-start-time"]'),
       {
         enableTime: true,
         dateFormat: 'Y/m/d H:i',
-        defaultDate: this._state.dateFrom,
-        onChange: this.#changeDateFrom,
+        defaultDate: this._currnentState.dateFrom,
+        onChange: this.#changeDateStart,
       },
     );
-    this.#datepicker.dateFrom = dateFromPickr;
+    this.#datepickerSet.dateFrom = dateFromPickr;
   };
 
   #changeType = (evt) => {
@@ -122,49 +86,28 @@ class RedactionView extends AbstractStatefulView {
   #changePrice = (evt) => {
     evt.preventDefault();
     const newPrice = Number(evt.target.value);
-    this._setState({
-      basePrice: newPrice,
-    });
+    this._setState({ basePrice: newPrice });
   };
 
   #changeOffers = (evt) => {
     evt.preventDefault();
     const offersField = this.element.querySelector('.event__available-offers');
     const checkboxes = offersField.querySelectorAll('.event__offer-checkbox:checked');
-
     const checkedIds = new Array();
-
-    checkboxes.forEach((checkbox) => {
-      checkedIds.push(Number(checkbox.id));
-    });
-
-    this._setState({
-      offers: checkedIds,
-    });
+    checkboxes.forEach((checkbox) => { checkedIds.push(Number(checkbox.id)); });
+    this._setState({ offers: checkedIds });
   };
 
   #changeDestination = (evt) => {
     evt.preventDefault();
-    const newDestinationName = evt.target.value;
-    const destination = Object.values(this.#availableDestinations).find(({name}) => newDestinationName === name);
+    const destinationName = evt.target.value;
+    const destinationToAdd = Object.values(this.#availableDestinationSet).find(({name}) => destinationName === name);
 
-    if (destination) {
-      this.updateElement({
-        destination: destination.id,
-        isDestination: true,
-      });
+    if (destinationToAdd) {
+      this.updateElement({destination: destinationToAdd.id, isDestination: true });
     } else {
-      this._setState({
-        destination: null,
-        isDestination: false,
-      });
+      this._setState({destination: null, isDestination: false });
     }
-
-  };
-
-  setCloseButtonClickHandler = (callback) => {
-    this._callback.closeForm = callback;
-    this.element.querySelector('.event__rollup-btn')?.addEventListener('click', this.#closeButtonClickHandler);
   };
 
   #closeButtonClickHandler = (evt) => {
@@ -172,32 +115,17 @@ class RedactionView extends AbstractStatefulView {
     this._callback.closeForm();
   };
 
-  setFormSubmitHandler = (callback) => {
-    this._callback.formSubmit = callback;
-    this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
-  };
-
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    const newState = RedactionView.parseStateToPoint(this._state);
-    if (isFormValid(newState, this.#availableDestinations)) {
+    const newState = parseStateToPoint(this._currnentState);
+    if (isFormValid(newState, this.#availableDestinationSet)) {
       this._callback.formSubmit(newState);
     }
   };
 
-  setDeleteButtonClickHandler = (callback) => {
-    this._callback.delete = callback;
-    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#deleteButtonClickHandler);
-  };
-
   #deleteButtonClickHandler = (evt) => {
     evt.preventDefault();
-    this._callback.delete(RedactionView.parseStateToPoint(this._state));
-  };
-
-  setEscKeydownHandler = (callback) => {
-    this._callback.escClose = callback;
-    document.addEventListener('keydown', this.#escKeydownHandler);
+    this._callback.delete(parseStateToPoint(this._currnentState));
   };
 
   #escKeydownHandler = (evt) => {
@@ -207,27 +135,55 @@ class RedactionView extends AbstractStatefulView {
     }
   };
 
+  setCloseButtonClickHandler = (callback) => {
+    this._callback.closeForm = callback;
+    this.element.querySelector('.event__rollup-btn')?.addEventListener('click', this.#closeButtonClickHandler);
+  };
+
+  setFormSubmitHandler = (callback) => {
+    this._callback.formSubmit = callback;
+    this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
+  };
+
+  setDeleteButtonClickHandler = (callback) => {
+    this._callback.delete = callback;
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#deleteButtonClickHandler);
+  };
+
+  setEscKeydownHandler = (callback) => {
+    this._callback.escClose = callback;
+    document.addEventListener('keydown', this.#escKeydownHandler);
+  };
+
   removeEscKeydownHandler = () => {
     document.removeEventListener('keydown', this.#escKeydownHandler);
   };
 
   reset = (point) => {
-    this.updateElement(
-      RedactionView.parsePointToState(point),
-    );
+    this.updateElement(parsePointToState(point),);
   };
 
   removeElement = () => {
     super.removeElement();
     this.removeEscKeydownHandler();
 
-    if (this.#datepicker.dateTo) {
-      this.#datepicker.dateTo.destroy();
-      this.#datepicker.dateTo = null;
+    if (this.#datepickerSet.dateTo) {
+      this.#datepickerSet.dateTo.destroy();
+      this.#datepickerSet.dateTo = null;
 
-      this.#datepicker.dateFrom.destroy();
-      this.#datepicker.dateFrom = null;
+      this.#datepickerSet.dateFrom.destroy();
+      this.#datepickerSet.dateFrom = null;
     }
+  };
+
+  _restoreHandlers = () => {
+    this.#setHandlers();
+    this.setFormSubmitHandler(this._callback.formSubmit);
+    this.setCloseButtonClickHandler(this._callback.closeForm);
+    this.setDeleteButtonClickHandler(this._callback.delete);
+
+    this.#setDateEndPicker();
+    this.#setDateStartPicker();
   };
 }
 
